@@ -1,28 +1,37 @@
-
-
 // Load Express and JSON parsing middleware
 const express = require("express");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 
 // Imports bot.js
-const bot = require('./bot.js');
+const bot = require("./groupmebot.js");
+const auth = require("./yahooauth.js");
+const yahoo = require("./yahoobot.js");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 
+app.use(bodyParser.json());
+
 // Test get endpoint
 app.get("/", (req, res) => res.send("API Running"));
 
 // Test post endpoint that makes groupme message
-app.post("/", async (req, res)  => {
+app.post("/", async (req, res) => {
   try {
-    const message = await bot.postMessage();
-    res.send('Message sent to GroupMe');
-    console.log('Message sent!')
+    const { text, name } = req.body;
+    const isCommand = bot.commandListener(text, name);
+    console.log("Is it a command?  " + isCommand);
+    if (isCommand ) {
+      const credentials = await yahoo.readCredentials();
+      const data = await yahoo.getData();
+      const message = await bot.formatObj(data, text)
+      // res.send(data);
+    }
+
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.log(err)
   }
 });
 
