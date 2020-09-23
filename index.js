@@ -5,13 +5,12 @@ const bodyParser = require("body-parser");
 
 // Imports bot.js
 const bot = require("./groupmebot.js");
-const auth = require("./yahooauth.js");
 const yahoo = require("./yahoobot.js");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-
+// Sets up bodyParser middleware to handle request from GroupMe
 app.use(bodyParser.json());
 
 // Test get endpoint
