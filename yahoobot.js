@@ -1,27 +1,38 @@
 // Load .env file
 require("dotenv").config();
 
-// Loads axios for auth requests
+// Loads axios for OAuth2 requests
 const axios = require("axios");
+
+// Loads fs for reading and writing tokens.json
 const fs = require("fs");
+
+// Loads qs for stringifying yahoo request data
 const qs = require("qs");
+
+// Loads module to make fantasy api calls clean and simple
 const YahooFantasy = require("yahoo-fantasy");
 
-// Loads yahoo client ID and secret
+// Loads in the yahoo env variables
 const yahooClientId = process.env.YAHOOCLIENTID;
 const yahooClientSecret = process.env.YAHOOCLIENTSECRET;
-const yahooAuthCode = process.env.YAHOOAPPCODE;
+const yahooAppCode = process.env.YAHOOAPPCODE;
 const yahooAppId = process.env.YAHOOAPPID;
 const leagueKey = process.env.LEAGUEKEY;
+
+// Client credentials converted to proper form for header in yahoo api requests
 const AUTH_HEADER = Buffer.from(
   `${yahooClientId}:${yahooClientSecret}`,
   "binary"
 ).toString("base64");
+
+// Pulls in tokens.json
 const tokenPath = "./tokens.json";
 
 let tokens = null;
 
-const yf = new YahooFantasy(yahooAppId, yahooAuthCode);
+// Creates new instance of YahooFantasy
+const yf = new YahooFantasy(yahooAppId, yahooAppCode);
 
 const getData = async () => {
   try {
@@ -102,6 +113,10 @@ function refreshAuthorizationToken(refresh_token) {
   });
 }
 
+
+/* Makes a call to get the intial tokens using your manually pasted
+YAHOOCLIENTSECRET, YAHOOAPPCODE, YAHOOCLIENTSECRET in your .env file */
+
 function getInitialAuthorization () {
     return axios({
         url: 'https://api.login.yahoo.com/oauth2/get_token',
@@ -114,7 +129,7 @@ function getInitialAuthorization () {
             client_id: yahooClientId,
             client_secret: yahooClientSecret,
             redirect_uri: 'oob',
-            code: yahooAuthCode,
+            code: yahooAppCode,
             grant_type: 'authorization_code',
         })
         }).catch((err) => {

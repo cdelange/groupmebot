@@ -17,7 +17,7 @@ const botCommands = [
   "@topscorers",
 ];
 
-// GroupMe Bot ID stored in .env file
+// GroupMe Bot ID that you manunally pasted and stored in .env file
 const token = process.env.GROUPMETOKEN;
 
 // Formatting function for Yahoo API return object
@@ -48,16 +48,46 @@ function formatObj(yahooObj, command) {
             ")"
           );
         })
-        .join("\n");
+      filteredStandings.splice(6,0,'---------------------------------')
       console.log(filteredStandings);
-      postMessage(`Week ${currentWeek} Standings: \n` + filteredStandings);
+      postMessage(`Week ${currentWeek} Standings: \n` + filteredStandings.join("\n"));
       break;
 
     case "@biggestvictory ":
       break;
 
     case "@sackowatch":
+
       //using the week it is and the week playoffs start and the current standings, You can filter the teams who are still theoretically possible to get sacko and as the season goes on the ranked list will get smaller and smaller. It will show how many games out you are
+      // const lastPlace = standings[11].outcome_totals.wins;
+      // const secondToLastPlace = standings[10].outcome_totals.wins;
+      // const lastPlaceLosses = standings[11].outcome_totals.losses;
+      // const secondToLastPlaceLosses = standings[10].outcome_totals.losses;
+      // console.log(lastPlace);
+
+      // Reverse, slices to first 6 elements and formats text
+      let sackoStandings = standings
+        .reverse()
+        .slice(0, 6)
+        .map((team) => {
+          return (
+            standings.indexOf(team) +
+            1 +
+            ". " +
+            team.name +
+            " " +
+            "(" +
+            team.standings.outcome_totals.wins +
+            "-" +
+            team.standings.outcome_totals.losses +
+            ")"
+          );
+        });
+
+      // Adds in divider for sacko bowl
+      sackoStandings.splice(2, 0, '---------------------------------')
+      console.log(sackoStandings);
+      postMessage(`Week ${currentWeek} Sacko Bowl Hunt: \n` + sackoStandings.join("\n"));
       break;
 
     case "@pointsagainst":
@@ -139,6 +169,10 @@ function formatObj(yahooObj, command) {
       );
       break;
   }
+}
+
+function sackoFilter(team) {
+
 }
 
 // Determines if incoming message is a command
