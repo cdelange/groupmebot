@@ -7,7 +7,7 @@
     "start": "node index.js",
     "server": "nodemon index.js"
   },
-  "keywords": [],
+  "keywords": ["groupme", "fantasy football", "yahoo", "node"],
   "author": "",
   "license": "MIT",
   "dependencies": {
