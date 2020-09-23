@@ -34,7 +34,7 @@ let tokens = null;
 // Creates new instance of YahooFantasy
 const yf = new YahooFantasy(yahooAppId, yahooAppCode);
 
-const getData = async () => {
+async function getData() {
   try {
     yf.setUserToken(tokens.access_token);
     const standings = await yf.league.standings(leagueKey);
@@ -105,8 +105,7 @@ function refreshAuthorizationToken(refresh_token) {
     data: qs.stringify({
       redirect_uri: "oob",
       grant_type: "refresh_token",
-      refresh_token:
-        "ADHrY1_kk4L5JCRdgnzo7Eur.Ejw7ZmX_w18MQSdsp3_naDmK.b.IMrn64Vu",
+      refresh_token: tokens.refresh_token,
     }),
   }).catch((err) => {
     console.error(`Error in refreshAuthorizationToken(): ${err}`);

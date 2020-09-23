@@ -29,7 +29,7 @@ function formatObj(yahooObj, command) {
   switch (command) {
     case "@help":
       postMessage(
-        "Here is a list of my commands: \n @help: \n @biggestvictory: \n @standings: \n @topscorers: \n @sackowatch: \n @pointsagainst: \n @pointsfor: \n @pointsdiff:"
+        "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @biggestvictory: Biggest margin of victory from previous week \n @standings: Current standings \n @topscorers: Top scoring players from previous week \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings"
       );
       break;
 
@@ -49,7 +49,7 @@ function formatObj(yahooObj, command) {
           );
         })
       filteredStandings.splice(6,0,'---------------------------------')
-      console.log(filteredStandings);
+      // console.log(filteredStandings);
       postMessage(`Week ${currentWeek} Standings: \n` + filteredStandings.join("\n"));
       break;
 
@@ -59,11 +59,6 @@ function formatObj(yahooObj, command) {
     case "@sackowatch":
 
       //using the week it is and the week playoffs start and the current standings, You can filter the teams who are still theoretically possible to get sacko and as the season goes on the ranked list will get smaller and smaller. It will show how many games out you are
-      // const lastPlace = standings[11].outcome_totals.wins;
-      // const secondToLastPlace = standings[10].outcome_totals.wins;
-      // const lastPlaceLosses = standings[11].outcome_totals.losses;
-      // const secondToLastPlaceLosses = standings[10].outcome_totals.losses;
-      // console.log(lastPlace);
 
       // Reverse, slices to first 6 elements and formats text
       let sackoStandings = standings
