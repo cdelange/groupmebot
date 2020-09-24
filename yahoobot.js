@@ -24,7 +24,7 @@ const leagueKey = process.env.LEAGUEKEY;
 const AUTH_HEADER = Buffer.from(
   `${yahooClientId}:${yahooClientSecret}`,
   "binary"
-).toString("base64");
+  ).toString("base64");
 
 // Pulls in tokens.json
 const tokenPath = "./tokens.json";
@@ -58,7 +58,7 @@ async function getData() {
     } else {
       console.error(
         `Error with credentials in makeAPIrequest()/refreshAuthorizationToken(): ${err}`
-      );
+        );
     }
     console.log(err);
   }
@@ -81,13 +81,13 @@ async function readCredentials() {
       if (newToken && newToken.data && newToken.data.access_token) {
         fs.writeFile(tokenPath, JSON.stringify(newToken.data), (err) => {
           if (err) {console.error(`Error in writing to ${tokenPath}: ${err}`)};
-          })}
+        })}
         tokens = newToken.data;
       }
-  } catch (err) {
-    console.error(`Error in readCredentials(): ${err}`);
+    } catch (err) {
+      console.error(`Error in readCredentials(): ${err}`);
+    }
   }
-}
 
 // If token is expired, request new one
 function refreshAuthorizationToken(refresh_token) {
@@ -113,23 +113,23 @@ function refreshAuthorizationToken(refresh_token) {
 YAHOOCLIENTSECRET, YAHOOAPPCODE, YAHOOCLIENTSECRET in your .env file */
 
 function getInitialAuthorization () {
-    return axios({
-        url: 'https://api.login.yahoo.com/oauth2/get_token',
-        method: 'post',
-        headers: {
-            'Authorization': `Basic ${AUTH_HEADER}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: qs.stringify({
-            client_id: yahooClientId,
-            client_secret: yahooClientSecret,
-            redirect_uri: 'oob',
-            code: yahooAppCode,
-            grant_type: 'authorization_code',
-        })
-        }).catch((err) => {
-            console.error(`Error in getInitialAuthorization(): ${err}`);
-        });
+  return axios({
+    url: 'https://api.login.yahoo.com/oauth2/get_token',
+    method: 'post',
+    headers: {
+      'Authorization': `Basic ${AUTH_HEADER}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    data: qs.stringify({
+      client_id: yahooClientId,
+      client_secret: yahooClientSecret,
+      redirect_uri: 'oob',
+      code: yahooAppCode,
+      grant_type: 'authorization_code',
+    })
+  }).catch((err) => {
+    console.error(`Error in getInitialAuthorization(): ${err}`);
+  });
 }
 
 
