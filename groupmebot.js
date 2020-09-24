@@ -171,7 +171,7 @@ function sackoFilter(team) {
 }
 
 // Determines if incoming message is a command
-function commandListener(text, name) {
+function commandListener(text) {
   for (let command of botCommands) {
     if (text === command) {
       return true;

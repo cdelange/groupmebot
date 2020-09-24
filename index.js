@@ -14,21 +14,19 @@ const app = express();
 app.use(bodyParser.json());
 
 // Test get endpoint
-app.get("/", (req, res) => res.send("API Running"));
+app.get("/", (req, res) => res.send("API Running..."));
 
 // Test post endpoint that makes groupme message
-app.post("/", async (req, res) => {
+app.post("/", async (req) => {
   try {
-    const { text, name } = req.body;
-    const isCommand = bot.commandListener(text, name);
+    const { text } = req.body;
+    const isCommand = bot.commandListener(text);
     console.log("Is it a command?  " + isCommand);
     if (isCommand ) {
       const credentials = await yahoo.readCredentials();
       const data = await yahoo.getData();
       const message = await bot.formatObj(data, text)
-      // res.send(data);
     }
-
   } catch (err) {
     console.log(err)
   }
