@@ -34,30 +34,30 @@ function formatObj(yahooObj, command) {
       break;
 
     case "@standings":
-      let filteredStandings = standings
-        .map((team) => {
-          return (
-            team.standings.rank +
-            ". " +
-            team.name +
-            " " +
-            "(" +
-            team.standings.outcome_totals.wins +
-            "-" +
-            team.standings.outcome_totals.losses +
-            ")"
-          );
-        })
-      filteredStandings.splice(6,0,'---------------------------------')
+      let filteredStandings = standings.map((team) => {
+        return (
+          team.standings.rank +
+          ". " +
+          team.name +
+          " " +
+          "(" +
+          team.standings.outcome_totals.wins +
+          "-" +
+          team.standings.outcome_totals.losses +
+          ")"
+        );
+      });
+      filteredStandings.splice(6, 0, "---------------------------------");
       // console.log(filteredStandings);
-      postMessage(`Week ${currentWeek} Standings: \n` + filteredStandings.join("\n"));
+      postMessage(
+        `Week ${currentWeek} Standings: \n` + filteredStandings.join("\n")
+      );
       break;
 
     case "@biggestvictory ":
       break;
 
     case "@sackowatch":
-
       //using the week it is and the week playoffs start and the current standings, You can filter the teams who are still theoretically possible to get sacko and as the season goes on the ranked list will get smaller and smaller. It will show how many games out you are
 
       // Reverse, slices to first 6 elements and formats text
@@ -80,9 +80,11 @@ function formatObj(yahooObj, command) {
         });
 
       // Adds in divider for sacko bowl
-      sackoStandings.splice(2, 0, '---------------------------------')
+      sackoStandings.splice(2, 0, "---------------------------------");
       console.log(sackoStandings);
-      postMessage(`Week ${currentWeek} Sacko Bowl Hunt: \n` + sackoStandings.join("\n"));
+      postMessage(
+        `Week ${currentWeek} Sacko Bowl Hunt: \n` + sackoStandings.join("\n")
+      );
       break;
 
     case "@pointsagainst":
@@ -166,10 +168,6 @@ function formatObj(yahooObj, command) {
   }
 }
 
-function sackoFilter(team) {
-
-}
-
 // Determines if incoming message is a command
 function commandListener(text) {
   for (let command of botCommands) {
@@ -188,10 +186,10 @@ async function postMessage(string) {
       bot_id: token,
       text: string,
     };
-    const res = await axios.post("https://api.groupme.com/v3/bots/post", body);
+    const request = await axios.post("https://api.groupme.com/v3/bots/post", body);
   } catch (err) {
     console.error(err.message);
-    // res.status(500).send("Server error");
+    request.status(500).send("Server error");
   }
 }
 

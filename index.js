@@ -21,7 +21,7 @@ app.post("/", async (req) => {
   try {
     const { text } = req.body;
     const isCommand = bot.commandListener(text);
-    console.log("Is it a command?  " + isCommand);
+    console.log("Is it a command? " + isCommand);
     if (isCommand ) {
       const credentials = await yahoo.readCredentials();
       const data = await yahoo.getData();

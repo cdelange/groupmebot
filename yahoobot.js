@@ -37,14 +37,11 @@ const yf = new YahooFantasy(yahooAppId, yahooAppCode);
 async function getData() {
   try {
     yf.setUserToken(tokens.access_token);
-    const standings = await yf.league.standings(leagueKey);
-    console.log('standings retrieved');
-    return standings;
+    console.log('Retrieving Standings...');
+    return yf.league.standings(leagueKey);
   } catch (err) {
     if (err.description.includes("token_expired")) {
-      const newToken = await refreshAuthorizationToken(
-        tokens.refresh_token
-      );
+      const newToken = await refreshAuthorizationToken(tokens.refresh_token);
       console.log("Waiting on new tokens...");
       if (newToken && newToken.data && newToken.data.access_token) {
         tokens = newToken.data;
@@ -73,8 +70,7 @@ async function readCredentials() {
     // Check if tokens.json exists
     if (fs.existsSync(tokenPath)) {
       try {
-        tokens = JSON.parse(fs.readFileSync(tokenPath, "utf8"));
-        // console.log(tokens);
+        tokens =  await JSON.parse(fs.readFileSync(tokenPath, "utf8"));
       } catch (err) {
         console.error(`Error parsing tokens file ${tokenPath}: ${err}.`);
         process.exit();
@@ -93,7 +89,7 @@ async function readCredentials() {
   }
 }
 
-// If token is expired, request new one NEED TO IMPORT TOKENS FIRST
+// If token is expired, request new one
 function refreshAuthorizationToken(refresh_token) {
   return axios({
     url: `https://api.login.yahoo.com/oauth2/get_token`,
