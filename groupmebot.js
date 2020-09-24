@@ -186,7 +186,10 @@ async function postMessage(string) {
       bot_id: token,
       text: string,
     };
-    const request = await axios.post("https://api.groupme.com/v3/bots/post", body);
+    const request = await axios.post(
+      "https://api.groupme.com/v3/bots/post",
+      body
+    );
   } catch (err) {
     console.error(err.message);
     request.status(500).send("Server error");
