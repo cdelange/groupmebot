@@ -32,6 +32,8 @@ function helpMessage() {
 function formatObj(yahooObj, command) {
   const currentWeek = yahooObj["current_week"];
   const standings = yahooObj.standings;
+  console.log("Sending message...");
+  console.log("-----------------------------");
 
   // Switch/case for each valid command to be formatted differently
   switch (command) {
@@ -50,7 +52,6 @@ function formatObj(yahooObj, command) {
         );
       });
       filteredStandings.splice(6, 0, "---------------------------------");
-      console.log("Calling postMessage to send off formatted message to GroupMe");
       postMessage(
         `Week ${currentWeek} Standings: \n` + filteredStandings.join("\n")
       );

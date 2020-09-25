@@ -51,12 +51,11 @@ async function getData(parsedTokens) {
       const newToken = await refreshAuthorizationToken(parsedTokens);
       console.log("Waiting on new tokens...");
       if (newToken && newToken.data && newToken.data.access_token) {
-        parsedTokens = newToken.data;
         await s3.uploadFile(JSON.stringify(newToken.data));
-        const setTokens = await yf.setUserToken(JSON.stringify(newToken.data.access_token));
         console.log("New tokens written to tokens.json.");
-        getData();
-        console.log("ran getData");
+        const newTokens = await JSON.parse(newToken.data.toString());
+        await getData(newTokens);
+        console.log("Rerunning getData()...");
       }
     } else {
       console.log(
@@ -81,7 +80,7 @@ async function createAwsTokensFile() {
 
 // If token is expired, request new one
 function refreshAuthorizationToken(parsedTokens) {
-  console.log('getting refresh auth...');
+  console.log('Refreshing tokens...');
   return axios({
     url: `https://api.login.yahoo.com/oauth2/get_token`,
     method: "post",

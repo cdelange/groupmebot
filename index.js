@@ -32,10 +32,8 @@ app.post("/", async function incomingMessage(req, res) {
     } else if ( exists ) {
       console.log(`Command was "${text}"`);
       console.log(`Tokens.josn exists? ${exists}`);
-      console.log('Tokens.json exists on AWS...');
       console.log("Reading file from AWS...");
       const tokens = await s3.readFile();
-      console.log("Converting String to JSON...");
       const parsedTokens = JSON.parse(tokens.toString());
       console.log("Getting data from Yahoo API...");
       const data = await yahoo.getData(parsedTokens);
@@ -43,7 +41,6 @@ app.post("/", async function incomingMessage(req, res) {
       const message = await bot.formatObj(data, text);
     } else {
       console.log(`Tokens.josn exists? ${exists}`);
-      console.log('Tokens.json does not exist on AWS...');
       console.log("Creating tokens.json on AWS...");
       const refreshedTokens = await yahoo.createAwsTokensFile()
       console.log(refreshedTokens);
@@ -54,7 +51,7 @@ app.post("/", async function incomingMessage(req, res) {
       console.log("Formatting Yahoo return object...");
       const message = await bot.formatObj(data, text)
     }
-    res.send(200);
+    res.sendStatus(200);
   }
   } catch (err) {
     console.log("Error in app.post: ");
