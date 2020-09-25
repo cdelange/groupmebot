@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => res.send("API Running..."));
 
 // Test post endpoint that makes groupme message
-app.post("/", async function incomingMessage(req) {
+app.post("/", async function incomingMessage(req, res) {
   try {
     const { text } = req.body;
     const isCommand = bot.commandListener(text);
@@ -54,6 +54,7 @@ app.post("/", async function incomingMessage(req) {
       console.log("Formatting Yahoo return object...");
       const message = await bot.formatObj(data, text)
     }
+    res.send(200);
   }
   } catch (err) {
     console.log("Error in app.post: ");

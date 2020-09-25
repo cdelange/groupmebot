@@ -142,8 +142,8 @@ function formatObj(yahooObj, command) {
       let sortedPointsDiff = standings
         .sort((a, b) => {
           return (
-            b.standings.points_for -
-            b.standings.points_against -
+            (b.standings.points_for -
+            b.standings.points_against) -
             (a.standings.points_for - b.standings.points_against)
           );
         })
