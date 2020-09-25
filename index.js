@@ -51,8 +51,11 @@ app.post("/", async function incomingMessage(req, res) {
       console.log("Formatting Yahoo return object...");
       const message = await bot.formatObj(data, text)
     }
-    res.sendStatus(200);
-  }
+      res.sendStatus(200);
+
+    } else {
+      res.sendStatus(200);
+    }
   } catch (err) {
     console.log("Error in app.post: ");
     console.log(err);

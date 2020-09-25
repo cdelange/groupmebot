@@ -15,6 +15,7 @@ const botCommands = [
   "@biggestvictory",
   "@sackowatch",
   "@topscorers",
+  "@avgdiff"
 ];
 
 // GroupMe Bot ID that you manunally pasted and stored in .env file
@@ -23,7 +24,7 @@ const token = process.env.GROUPMETOKEN;
 // Help command function
 function helpMessage() {
   postMessage(
-    "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @standings: Current standings \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings"
+    "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @standings: Current standings \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings \n @avgdiff: Average point differential"
   );
 }
 
@@ -57,7 +58,33 @@ function formatObj(yahooObj, command) {
       );
       break;
 
-    case "@biggestvictory ":
+    case "@avgdiff":
+      let sortedAvgDiff = standings
+        .sort((a, b) => {
+          return (
+            (b.standings.points_for - b.standings.points_against)/(currentWeek-1) - (a.standings.points_for - a.standings.points_against)/(currentWeek-1)
+          );
+        })
+        .map((team) => {
+          return (
+            standings.indexOf(team) +
+            1 +
+            ". " +
+            team.name +
+            " " +
+            "(" +
+            ((team.standings.points_for - team.standings.points_against)/(currentWeek-1)).toFixed(
+              2
+            ) +
+            ")"
+          );
+        })
+        .join("\n");
+        console.log(typeof currentWeek);
+      postMessage(
+        `Week ${currentWeek} Avg Differential Standings: \n` +
+          sortedAvgDiff
+      );
       break;
 
     case "@sackowatch":
