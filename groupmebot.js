@@ -20,6 +20,14 @@ const botCommands = [
 // GroupMe Bot ID that you manunally pasted and stored in .env file
 const token = process.env.GROUPMETOKEN;
 
+// Help command function
+function helpMessage() {
+  postMessage(
+    "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @biggestvictory: Biggest margin of victory from previous week \n @standings: Current standings \n @topscorers: Top scoring players from previous week \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings"
+  );
+}
+
+
 // Formatting function for Yahoo API return object
 function formatObj(yahooObj, command) {
   const currentWeek = yahooObj["current_week"];
@@ -27,12 +35,6 @@ function formatObj(yahooObj, command) {
 
   // Switch/case for each valid command to be formatted differently
   switch (command) {
-    case "@help":
-      postMessage(
-        "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @biggestvictory: Biggest margin of victory from previous week \n @standings: Current standings \n @topscorers: Top scoring players from previous week \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings"
-      );
-      break;
-
     case "@standings":
       let filteredStandings = standings.map((team) => {
         return (
@@ -48,7 +50,7 @@ function formatObj(yahooObj, command) {
         );
       });
       filteredStandings.splice(6, 0, "---------------------------------");
-      // console.log(filteredStandings);
+      console.log("Calling postMessage to send off formatted message to GroupMe");
       postMessage(
         `Week ${currentWeek} Standings: \n` + filteredStandings.join("\n")
       );
@@ -181,7 +183,7 @@ function commandListener(text) {
 // Sends post request to GroupMe containing formatted text
 async function postMessage(string) {
   try {
-    console.log(string);
+    // console.log(string);
     let body = {
       bot_id: token,
       text: string,
@@ -198,3 +200,4 @@ async function postMessage(string) {
 
 exports.commandListener = commandListener;
 exports.formatObj = formatObj;
+exports.helpMessage = helpMessage;

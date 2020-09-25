@@ -7,11 +7,17 @@ const axios = require("axios");
 // Loads fs for reading and writing tokens.json
 const fs = require("fs");
 
+// For reading and writing tokens.json to AWS S3
+const AWS = require('aws-sdk');
+
 // Loads qs for stringifying yahoo request data
 const qs = require("qs");
 
 // Loads module to make fantasy api calls clean and simple
 const YahooFantasy = require("yahoo-fantasy");
+
+// Imports s3ReadUpload.js **FOR DEPLOYMENT**
+const s3 = require("./s3ReadUpload.js");
 
 // Loads in the yahoo env variables
 const yahooClientId = process.env.YAHOOCLIENTID;
@@ -26,37 +32,34 @@ const AUTH_HEADER = Buffer.from(
   "binary"
   ).toString("base64");
 
-// Pulls in tokens.json
+// Pulls in tokens.json **FOR LOCAL DEV**
 const tokenPath = "./tokens.json";
 
-let tokens = null;
+// let tokens = s3.readFile();
 
 // Creates new instance of YahooFantasy
 const yf = new YahooFantasy(yahooAppId, yahooAppCode);
 
-async function getData() {
+async function getData(parsedTokens) {
   try {
-    yf.setUserToken(tokens.access_token);
+    yf.setUserToken(parsedTokens.access_token);
     console.log('Retrieving Standings...');
-    return yf.league.standings(leagueKey);
+    return await yf.league.standings(leagueKey);
+
   } catch (err) {
     if (err.description.includes("token_expired")) {
-      const newToken = await refreshAuthorizationToken(tokens.refresh_token);
+      const newToken = await refreshAuthorizationToken(parsedTokens);
       console.log("Waiting on new tokens...");
       if (newToken && newToken.data && newToken.data.access_token) {
-        tokens = newToken.data;
-        fs.writeFile(tokenPath, JSON.stringify(newToken.data), (err) => {
-          if (err) {
-            console.error(`Error in writing to ${tokenPath}: ${err}`);
-          }
-        });
+        parsedTokens = newToken.data;
+        await s3.uploadFile(JSON.stringify(newToken.data));
         const setTokens = await yf.setUserToken(JSON.stringify(newToken.data.access_token));
         console.log("New tokens written to tokens.json.");
         getData();
         console.log("ran getData");
       }
     } else {
-      console.error(
+      console.log(
         `Error with credentials in makeAPIrequest()/refreshAuthorizationToken(): ${err}`
         );
     }
@@ -65,32 +68,20 @@ async function getData() {
 };
 
 // Read tokens.json
-async function readCredentials() {
+async function createAwsTokensFile() {
   try {
-    // Check if tokens.json exists
-    if (fs.existsSync(tokenPath)) {
-      try {
-        tokens =  await JSON.parse(fs.readFileSync(tokenPath, "utf8"));
-      } catch (err) {
-        console.error(`Error parsing tokens file ${tokenPath}: ${err}.`);
-        process.exit();
-      }
-    } else {
-      // Get initial authorization token
-      const newToken = await getInitialAuthorization();
-      if (newToken && newToken.data && newToken.data.access_token) {
-        fs.writeFile(tokenPath, JSON.stringify(newToken.data), (err) => {
-          if (err) {console.error(`Error in writing to ${tokenPath}: ${err}`)};
-        })}
-        tokens = newToken.data;
-      }
-    } catch (err) {
-      console.error(`Error in readCredentials(): ${err}`);
-    }
+    // Get initial authorization token
+    const newToken = await getInitialAuthorization();
+    const upload = await s3.uploadFile(JSON.stringify(newToken.data));
+    return JSON.stringify(newToken.data);
+  } catch (err) {
+    console.error(`Error in createAwsTokensFile(): ${err}`);
   }
+}
 
 // If token is expired, request new one
-function refreshAuthorizationToken(refresh_token) {
+function refreshAuthorizationToken(parsedTokens) {
+  console.log('getting refresh auth...');
   return axios({
     url: `https://api.login.yahoo.com/oauth2/get_token`,
     method: "post",
@@ -101,7 +92,7 @@ function refreshAuthorizationToken(refresh_token) {
     data: qs.stringify({
       redirect_uri: "oob",
       grant_type: "refresh_token",
-      refresh_token: tokens.refresh_token,
+      refresh_token: parsedTokens.refresh_token,
     }),
   }).catch((err) => {
     console.error(`Error in refreshAuthorizationToken(): ${err}`);
@@ -112,7 +103,8 @@ function refreshAuthorizationToken(refresh_token) {
 /* Makes a call to get the intial tokens using your manually pasted
 YAHOOCLIENTSECRET, YAHOOAPPCODE, YAHOOCLIENTSECRET in your .env file */
 
-function getInitialAuthorization () {
+async function getInitialAuthorization () {
+  console.log('Getting inital authorization from Yahoo API...');
   return axios({
     url: 'https://api.login.yahoo.com/oauth2/get_token',
     method: 'post',
@@ -134,4 +126,4 @@ function getInitialAuthorization () {
 
 
 exports.getData = getData;
-exports.readCredentials = readCredentials;
+exports.createAwsTokensFile = createAwsTokensFile;
