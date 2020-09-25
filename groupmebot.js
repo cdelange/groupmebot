@@ -83,7 +83,6 @@ function formatObj(yahooObj, command) {
 
       // Adds in divider for sacko bowl
       sackoStandings.splice(2, 0, "---------------------------------");
-      console.log(sackoStandings);
       postMessage(
         `Week ${currentWeek} Sacko Bowl Hunt: \n` + sackoStandings.join("\n")
       );
@@ -142,9 +141,7 @@ function formatObj(yahooObj, command) {
       let sortedPointsDiff = standings
         .sort((a, b) => {
           return (
-            (b.standings.points_for -
-            b.standings.points_against) -
-            (a.standings.points_for - b.standings.points_against)
+            (b.standings.points_for - b.standings.points_against) -(a.standings.points_for - a.standings.points_against)
           );
         })
         .map((team) => {
@@ -183,7 +180,6 @@ function commandListener(text) {
 // Sends post request to GroupMe containing formatted text
 async function postMessage(string) {
   try {
-    // console.log(string);
     let body = {
       bot_id: token,
       text: string,
