@@ -23,7 +23,7 @@ const token = process.env.GROUPMETOKEN;
 // Help command function
 function helpMessage() {
   postMessage(
-    "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @biggestvictory: Biggest margin of victory from previous week \n @standings: Current standings \n @topscorers: Top scoring players from previous week \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings"
+    "Here is a list of my commands: \n @help: Will show all commands and descriptions \n @standings: Current standings \n @sackowatch: Sacko implications \n @pointsagainst: Points Against standings \n @pointsfor: Points For standings \n @pointsdiff: Point differential standings"
   );
 }
 
@@ -164,6 +164,10 @@ function formatObj(yahooObj, command) {
           sortedPointsDiff
       );
       break;
+
+    // case "@pointsdiff":
+    //   postMessage('Still a work in progress...');
+    //   break;
   }
 }
 
