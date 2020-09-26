@@ -1,7 +1,3 @@
-
-# node-readme-generator
-
-
 > A NodeJS GroupMe Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON tokens stored in AWS S3.
 
 Version: 1.0.0
