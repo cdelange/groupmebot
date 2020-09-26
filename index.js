@@ -58,7 +58,7 @@ app.post("/", async function incomingMessage(req, res) {
   }
     res.sendStatus(200);
 
-};
+});
 
 // Starts server
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
