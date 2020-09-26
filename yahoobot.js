@@ -53,7 +53,7 @@ async function getData(parsedTokens) {
       if (newToken && newToken.data && newToken.data.access_token) {
         await s3.uploadFile(JSON.stringify(newToken.data));
         console.log("New tokens written to tokens.json.");
-        const newTokens = await JSON.parse(newToken.data.toString());
+        const newTokens = await JSON.parse(JSON.stringify(newToken.data));
         await getData(newTokens);
         console.log("Rerunning getData()...");
       }
