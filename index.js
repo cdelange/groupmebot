@@ -51,13 +51,14 @@ app.post("/", async function incomingMessage(req, res) {
         console.log("Formatting Yahoo return object...");
         const message = await bot.formatObj(data, text)
       }
+    }
   } catch (err) {
     console.log("Error in app.post: ");
     console.log(err);
   }
     res.sendStatus(200);
 
-}};
+};
 
 // Starts server
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
