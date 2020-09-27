@@ -44,18 +44,16 @@ async function getData(parsedTokens) {
   try {
     yf.setUserToken(parsedTokens.access_token);
     console.log('Retrieving Standings...');
-    return await yf.league.standings(leagueKey);
+    await yf.league.standings(leagueKey);
 
   } catch (err) {
     if (err.description.includes("token_expired")) {
       const newToken = await refreshAuthorizationToken(parsedTokens);
-      console.log("Waiting on new tokens...");
       if (newToken && newToken.data && newToken.data.access_token) {
+        await getData(JSON.parse(newToken.toString()));
         await s3.uploadFile(JSON.stringify(newToken.data));
-        console.log(s3.uploadFile(JSON.stringify(newToken.data)))
-        const newTokens = await JSON.parse(JSON.stringify(newToken.data));
-        await getData(newTokens);
-        console.log("Rerunning getData()...");
+        // console.log(s3.uploadFile(JSON.stringify(newToken.data)))
+        // const newTokens = await JSON.parse(JSON.stringify(newToken.data));
       }
     } else {
       console.log(
