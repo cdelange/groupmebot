@@ -50,7 +50,7 @@ async function getData(parsedTokens) {
     if (err.description.includes("token_expired")) {
       const newToken = await refreshAuthorizationToken(parsedTokens);
       if (newToken && newToken.data && newToken.data.access_token) {
-        await getData(JSON.parse(newToken.toString()));
+        await getData(newToken);
         await s3.uploadFile(JSON.stringify(newToken.data));
         // console.log(s3.uploadFile(JSON.stringify(newToken.data)))
         // const newTokens = await JSON.parse(JSON.stringify(newToken.data));
