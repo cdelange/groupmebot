@@ -52,7 +52,7 @@ async function getData(parsedTokens) {
       console.log("Waiting on new tokens...");
       if (newToken && newToken.data && newToken.data.access_token) {
         await s3.uploadFile(JSON.stringify(newToken.data));
-        await yf.setUserToken(JSON.stringify(newToken.data));
+        console.log(s3.uploadFile(JSON.stringify(newToken.data)))
         const newTokens = await JSON.parse(JSON.stringify(newToken.data));
         await getData(newTokens);
         console.log("Rerunning getData()...");
