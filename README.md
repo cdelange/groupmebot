@@ -16,33 +16,36 @@ A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fa
 ## Dependencies
 
 - [expressjs](https://github.com/expressjs/express) - The server for handling and routing HTTP requests
-- [aws-sdk](https://github.com/auth0/express-jwt) - Middleware for validating JWTs for authentication
-- [axios](https://github.com/auth0/node-jsonwebtoken) - For generating JWTs used by authentication
-- [body-parser](https://github.com/Automattic/mongoose) - For modeling and mapping MongoDB data to javascript
-- [dotenv](https://github.com/blakehaswell/mongoose-unique-validator) - For handling unique validation errors in Mongoose.
-- [yahoo-fantasy](https://github.com/jaredhanson/passport) - For handling user authentication
-- [qs](https://github.com/dodo/node-slug) - For encoding titles into a URL-friendly format
-- [nodemon](https://github.com/dodo/node-slug) - For encoding titles into a URL-friendly format
-- [mocha](https://github.com/dodo/node-slug) - For encoding titles into a URL-friendly format
-- [chai](https://github.com/dodo/node-slug) - For encoding titles into a URL-friendly format
-- [make-runnable](https://github.com/dodo/node-slug) - For encoding titles into a URL-friendly format
+- [aws-sdk](https://github.com/aws/aws-sdk-js) - JS API for interacting with AWS S3
+- [axios](https://github.com/axios/axios) - Promise based HTTP client for making API requests
+- [body-parser](https://github.com/expressjs/body-parser#readme) - For parsing incoming request bodies from GroupMe
+- [dotenv](https://github.com/motdotla/dotenv#readme) - Loads environment variables from .env file
+- [yahoo-fantasy](https://github.com/whatadewitt/yfsapi) - Wrapper for the Yahoo! Fantasy Sports API to make API requests simpler
+- [qs](https://github.com/ljharb/qs) - Used to convert Yahoo OAuth2 request bodies into a parameter string in the url
+- [nodemon](http://nodemon.io/) -Tool that restarts Node Application when file changes are detected in development
+- [mocha](https://mochajs.org/) - Testing framework
+- [chai](http://chaijs.com/) - Assertion library for testing
+- [make-runnable](https://github.com/super-cache-money/make-runnable#readme) - For calling exported functions in the command line during development
 
 ## Application Structure
 
-- `app.js` - The entry point to our application. This file defines our express server and connects it to MongoDB using mongoose. It also requires the routes and models we'll be using in the application.
-- `config/` - This folder contains configuration for passport as well as a central location for configuration/environment variables.
-- `routes/` - This folder contains the route definitions for our API.
-- `models/` - This folder contains the schema definitions for our Mongoose models.
+- `app.js` - The entry point to our application. This file defines our express app.
+- `test/` - This folder contains our Mocha tests.
+- `yahoobot.js` - This file contains all requests and interactions with the Yahoo Sports API.
+- `groupmebot.js` - This file contains all requests and formatting functions pertaining to the GroupMe API.
+- `s3.js` - This folder the functions for writing, reading, and confirming the existance of the tokens.json file stored in S3.
 
 ## Error Handling
 
-In `routes/api/index.js`, we define a error-handling middleware for handling Mongoose's `ValidationError`. This middleware will respond with a 422 status code and format the response to have [error messages the clients can understand](https://github.com/gothinkster/realworld/blob/master/API.md#errors-and-status-codes)
+Errors are handled mostly through Try/Catch statements and are logged to the console.
 
 ## Authentication
 
-Requests are authenticated using the `Authorization` header with a valid JWT. We define two express middlewares in `routes/auth.js` that can be used to authenticate requests. The `required` middleware configures the `express-jwt` middleware using our application's secret and will return a 401 status code if the request cannot be authenticated. The payload of the JWT can then be accessed from `req.payload` in the endpoint. The `optional` middleware configures the `express-jwt` in the same way as `required`, but will *not* return a 401 status code if the request cannot be authenticated.
+Requests are authenticated using a Bot ID for GroupMe and OAuth2 authentication for Yahoo Sports API. OAuth2 requires refreshing of the access token every hour. Inital Authorization requires some human interaction with the browser to grab the App Access Code.
 
+## Set Up
 
+Coming soon...
 
 ## Scripts
 
@@ -56,7 +59,7 @@ These were both helpful repositories that I emulated in some of my Yahoo API cal
 -  [https://github.com/whatadewitt/yahoo-fantasy-sports-api](https://github.com/whatadewitt/yahoo-fantasy-sports-api)
 
 ## Bugs and Issues
-This is still V1 and a work in progress. Report any issues via the GitHub issues page!
+This is a work in progress. Report any issues via the GitHub issues page!
 
 ## Licence
 
