@@ -15,7 +15,7 @@ const botCommands = [
   "@biggestvictory",
   "@sackowatch",
   "@topscorers",
-  "@avgdiff"
+  "@avgdiff",
 ];
 
 // GroupMe Bot ID that you manunally pasted and stored in .env file
@@ -28,10 +28,8 @@ function helpMessage() {
   );
 }
 
-
 // Formatting function for Yahoo API return object
 function formatObj(yahooObj, command) {
-
   try {
     console.log("Formatting Yahoo return object.");
     const currentWeek = yahooObj.current_week;
@@ -43,17 +41,7 @@ function formatObj(yahooObj, command) {
     switch (command) {
       case "@standings":
         let filteredStandings = standings.map((team) => {
-          return (
-            team.standings.rank +
-            ". " +
-            team.name +
-            " " +
-            "(" +
-            team.standings.outcome_totals.wins +
-            "-" +
-            team.standings.outcome_totals.losses +
-            ")"
-          );
+          return `${team.standings.rank}. ${team.name} (${team.standings.outcome_totals.wins}-${team.standings.outcome_totals.losses})`;
         });
         filteredStandings.splice(6, 0, "---------------------------------");
         postMessage(
@@ -65,28 +53,18 @@ function formatObj(yahooObj, command) {
         let sortedAvgDiff = standings
           .sort((a, b) => {
             return (
-              (b.standings.points_for - b.standings.points_against)/(currentWeek-1) - (a.standings.points_for - a.standings.points_against)/(currentWeek-1)
+              (b.standings.points_for - b.standings.points_against) /
+                (currentWeek - 1) -
+              (a.standings.points_for - a.standings.points_against) /
+                (currentWeek - 1)
             );
           })
           .map((team) => {
-            return (
-              standings.indexOf(team) +
-              1 +
-              ". " +
-              team.name +
-              " " +
-              "(" +
-              ((team.standings.points_for - team.standings.points_against)/(currentWeek-1)).toFixed(
-                2
-              ) +
-              ")"
-            );
+            return `${standings.indexOf(team) + 1}. ${team.name} (${((team.standings.points_for - team.standings.points_against) / (currentWeek - 1)).toFixed(2)})`
           })
           .join("\n");
-          console.log(typeof currentWeek);
         postMessage(
-          `Week ${currentWeek} Avg Differential Standings: \n` +
-            sortedAvgDiff
+          `Week ${currentWeek} Avg Differential Standings: \n` + sortedAvgDiff
         );
         break;
 
@@ -98,18 +76,7 @@ function formatObj(yahooObj, command) {
           .reverse()
           .slice(0, 6)
           .map((team) => {
-            return (
-              standings.indexOf(team) +
-              1 +
-              ". " +
-              team.name +
-              " " +
-              "(" +
-              team.standings.outcome_totals.wins +
-              "-" +
-              team.standings.outcome_totals.losses +
-              ")"
-            );
+            return `${standings.indexOf(team) + 1}. ${team.name} (${team.standings.outcome_totals.wins}-${team.standings.outcome_totals.losses})`;
           });
 
         // Adds in divider for sacko bowl
@@ -125,20 +92,12 @@ function formatObj(yahooObj, command) {
             return b.standings.points_against - a.standings.points_against;
           })
           .map((team) => {
-            return (
-              standings.indexOf(team) +
-              1 +
-              ". " +
-              team.name +
-              " " +
-              "(" +
-              team.standings.points_against.toFixed(2) +
-              ")"
-            );
+            return `${standings.indexOf(team) + 1}. ${team.name} (${team.standings.points_against.toFixed(2)})`;
           })
           .join("\n");
         postMessage(
-          `Week ${currentWeek} Points Against Standings: \n` + sortedPointsAgainst
+          `Week ${currentWeek} Points Against Standings: \n` +
+            sortedPointsAgainst
         );
         break;
 
@@ -151,16 +110,7 @@ function formatObj(yahooObj, command) {
             );
           })
           .map((team) => {
-            return (
-              standings.indexOf(team) +
-              1 +
-              ". " +
-              team.name +
-              " " +
-              "(" +
-              parseFloat(team.standings.points_for).toFixed(2) +
-              ")"
-            );
+            return `${standings.indexOf(team) + 1}. ${team.name} (${parseFloat(team.standings.points_for).toFixed(2)})`;
           })
           .join("\n");
         postMessage(
@@ -172,22 +122,13 @@ function formatObj(yahooObj, command) {
         let sortedPointsDiff = standings
           .sort((a, b) => {
             return (
-              (b.standings.points_for - b.standings.points_against) -(a.standings.points_for - a.standings.points_against)
+              b.standings.points_for -
+              b.standings.points_against -
+              (a.standings.points_for - a.standings.points_against)
             );
           })
           .map((team) => {
-            return (
-              standings.indexOf(team) +
-              1 +
-              ". " +
-              team.name +
-              " " +
-              "(" +
-              (team.standings.points_for - team.standings.points_against).toFixed(
-                2
-              ) +
-              ")"
-            );
+            return `${standings.indexOf(team) + 1}. ${team.name} (${(team.standings.points_for - team.standings.points_against).toFixed(2)})`
           })
           .join("\n");
         postMessage(
@@ -205,7 +146,7 @@ function formatObj(yahooObj, command) {
 function commandListener(text) {
   for (let command of botCommands) {
     if (text === command) {
-      console.log(`Command detected: ${text}`)
+      console.log(`Command detected: ${text}`);
       return true;
     }
   }

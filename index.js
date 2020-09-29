@@ -24,30 +24,28 @@ app.post("/", async function incomingMessage(req, res) {
     const { text } = req.body;
     const isCommand = bot.commandListener(text);
 
-    if(isCommand){
+    if (isCommand) {
+      const exists = await s3.fileExists();
 
-      const exists = await s3.fileExists()
-
-      if ( text == '@help' ) {
-        console.log('Command was @help');
+      if (text == "@help") {
+        console.log("Command was @help");
         bot.helpMessage();
-      } else if ( exists ) {
+      } else if (exists) {
         const tokens = await s3.readFile();
         const data = await yahoo.getData(tokens);
-        const message = await bot.formatObj(data, text);
-      } else if ( !exists ) {
-        const createTokens = await yahoo.createAwsTokensFile()
+        bot.formatObj(data, text);
+      } else if (!exists) {
+        const createTokens = await yahoo.createAwsTokensFile();
         const newTokens = await s3.readFile();
         const data = await yahoo.getData(newTokens);
-        const message = await bot.formatObj(data, text)
+        bot.formatObj(data, text);
       }
     }
   } catch (err) {
-    console.log("Error in app.post: ");
+    console.log("Error in app.post...");
     console.log(err);
   }
-    res.sendStatus(200);
-
+  res.sendStatus(200);
 });
 
 // Starts server
