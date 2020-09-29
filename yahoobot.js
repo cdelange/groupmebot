@@ -1,7 +1,6 @@
 require("dotenv").config(); // Load .env file
 
 const axios = require("axios"); // Loads axios for OAuth2 requests
-const fs = require("fs"); // Loads fs for reading and writing tokens.json
 const AWS = require("aws-sdk"); // For reading and writing tokens.json to AWS S3
 const qs = require("qs"); // Loads qs for stringifying yahoo request data
 const YahooFantasy = require("yahoo-fantasy"); // Loads module to make fantasy api calls clean and simple
