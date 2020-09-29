@@ -1,4 +1,4 @@
-> A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3.
+# Yahoo Fantasy Football Bot
 
 Version: 1.0.0
 
