@@ -1,25 +1,13 @@
-// Load .env file
-require("dotenv").config();
+require("dotenv").config();               // Load .env file
 
-// Loads axios for OAuth2 requests
-const axios = require("axios");
+const axios = require("axios");           // Loads axios for OAuth2 requests
+const fs = require("fs");                 // Loads fs for reading and writing tokens.json
+const AWS = require('aws-sdk');           // For reading and writing tokens.json to AWS S3
+const qs = require("qs");                 // Loads qs for stringifying yahoo request data
+const YahooFantasy = require("yahoo-fantasy");    // Loads module to make fantasy api calls clean and simple
+const s3 = require("./s3.js");        // Imports s3ReadUpload.js
 
-// Loads fs for reading and writing tokens.json
-const fs = require("fs");
-
-// For reading and writing tokens.json to AWS S3
-const AWS = require('aws-sdk');
-
-// Loads qs for stringifying yahoo request data
-const qs = require("qs");
-
-// Loads module to make fantasy api calls clean and simple
-const YahooFantasy = require("yahoo-fantasy");
-
-// Imports s3ReadUpload.js **FOR DEPLOYMENT**
-const s3 = require("./s3ReadUpload.js");
-
-// Loads in the yahoo env variables
+// Loads in the yahoo .env variables
 const yahooClientId = process.env.YAHOOCLIENTID;
 const yahooClientSecret = process.env.YAHOOCLIENTSECRET;
 const yahooAppCode = process.env.YAHOOAPPCODE;
@@ -32,53 +20,47 @@ const AUTH_HEADER = Buffer.from(
   "binary"
   ).toString("base64");
 
-// Pulls in tokens.json **FOR LOCAL DEV**
-const tokenPath = "./tokens.json";
-
-// let tokens = s3.readFile();
-
-// Creates new instance of YahooFantasy
-const yf = new YahooFantasy(yahooAppId, yahooAppCode);
+const yf = new YahooFantasy(yahooAppId, yahooAppCode);            // Creates new instance of YahooFantasy
 
 async function getData(parsedTokens) {
+  console.log("Fetching data from Yahoo API.");
   try {
     yf.setUserToken(parsedTokens.access_token);
-    console.log('Retrieving Standings...');
-    await yf.league.standings(leagueKey);
-
+    const standings = await yf.league.standings(leagueKey);
+    return standings;
   } catch (err) {
     if (err.description.includes("token_expired")) {
+      console.log('Token is expired.');
       const newToken = await refreshAuthorizationToken(parsedTokens);
       if (newToken && newToken.data && newToken.data.access_token) {
-        await getData(newToken);
         await s3.uploadFile(JSON.stringify(newToken.data));
-        // console.log(s3.uploadFile(JSON.stringify(newToken.data)))
-        // const newTokens = await JSON.parse(JSON.stringify(newToken.data));
+        yf.setUserToken(newToken.data.access_token);
+        const standings = await yf.league.standings(leagueKey);
+        return standings;
       }
     } else {
       console.log(
         `Error with credentials in makeAPIrequest()/refreshAuthorizationToken(): ${err}`
         );
     }
-    console.log(err);
   }
 };
 
-// Read tokens.json
+// Creates initial tokens.json file on S3
 async function createAwsTokensFile() {
   try {
-    // Get initial authorization token
-    const newToken = await getInitialAuthorization();
-    const upload = await s3.uploadFile(JSON.stringify(newToken.data));
-    return JSON.stringify(newToken.data);
+    console.log("Creating new tokens file.");
+    const newTokens = await getInitialAuthorization();
+    const parsedTokens = await s3.uploadFile(JSON.stringify(newTokens.data));
+    return parsedTokens;
   } catch (err) {
     console.error(`Error in createAwsTokensFile(): ${err}`);
   }
 }
 
-// If token is expired, request new one
+// If token is expired, request new one using refresh token
 function refreshAuthorizationToken(parsedTokens) {
-  console.log('Refreshing tokens...');
+  console.log('Refreshing token.');
   return axios({
     url: `https://api.login.yahoo.com/oauth2/get_token`,
     method: "post",
@@ -96,11 +78,10 @@ function refreshAuthorizationToken(parsedTokens) {
   });
 }
 
-
 /* Makes a call to get the intial tokens using your manually pasted
 YAHOOCLIENTSECRET, YAHOOAPPCODE, YAHOOCLIENTSECRET in your .env file */
 
-async function getInitialAuthorization () {
+async function getInitialAuthorization() {
   console.log('Getting inital authorization from Yahoo API...');
   return axios({
     url: 'https://api.login.yahoo.com/oauth2/get_token',
@@ -117,10 +98,11 @@ async function getInitialAuthorization () {
       grant_type: 'authorization_code',
     })
   }).catch((err) => {
-    console.error(`Error in getInitialAuthorization(): ${err}`);
+    console.log(`Error in getInitialAuthorization():`);
+    console.log(err);
   });
 }
 
-
 exports.getData = getData;
 exports.createAwsTokensFile = createAwsTokensFile;
+require('make-runnable');

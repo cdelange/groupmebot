@@ -31,73 +31,20 @@ function helpMessage() {
 
 // Formatting function for Yahoo API return object
 function formatObj(yahooObj, command) {
-  const currentWeek = yahooObj["current_week"];
-  const standings = yahooObj.standings;
-  console.log("Sending message...");
-  console.log("-----------------------------");
 
-  // Switch/case for each valid command to be formatted differently
-  switch (command) {
-    case "@standings":
-      let filteredStandings = standings.map((team) => {
-        return (
-          team.standings.rank +
-          ". " +
-          team.name +
-          " " +
-          "(" +
-          team.standings.outcome_totals.wins +
-          "-" +
-          team.standings.outcome_totals.losses +
-          ")"
-        );
-      });
-      filteredStandings.splice(6, 0, "---------------------------------");
-      postMessage(
-        `Week ${currentWeek} Standings: \n` + filteredStandings.join("\n")
-      );
-      break;
+  try {
+    console.log("Formatting Yahoo return object.");
+    const currentWeek = yahooObj.current_week;
+    const standings = yahooObj.standings;
+    console.log("Sending message...");
+    console.log("-----------------------------");
 
-    case "@avgdiff":
-      let sortedAvgDiff = standings
-        .sort((a, b) => {
+    // Switch/case for each valid command to be formatted differently
+    switch (command) {
+      case "@standings":
+        let filteredStandings = standings.map((team) => {
           return (
-            (b.standings.points_for - b.standings.points_against)/(currentWeek-1) - (a.standings.points_for - a.standings.points_against)/(currentWeek-1)
-          );
-        })
-        .map((team) => {
-          return (
-            standings.indexOf(team) +
-            1 +
-            ". " +
-            team.name +
-            " " +
-            "(" +
-            ((team.standings.points_for - team.standings.points_against)/(currentWeek-1)).toFixed(
-              2
-            ) +
-            ")"
-          );
-        })
-        .join("\n");
-        console.log(typeof currentWeek);
-      postMessage(
-        `Week ${currentWeek} Avg Differential Standings: \n` +
-          sortedAvgDiff
-      );
-      break;
-
-    case "@sackowatch":
-      //using the week it is and the week playoffs start and the current standings, You can filter the teams who are still theoretically possible to get sacko and as the season goes on the ranked list will get smaller and smaller. It will show how many games out you are
-
-      // Reverse, slices to first 6 elements and formats text
-      let sackoStandings = standings
-        .reverse()
-        .slice(0, 6)
-        .map((team) => {
-          return (
-            standings.indexOf(team) +
-            1 +
+            team.standings.rank +
             ". " +
             team.name +
             " " +
@@ -108,94 +55,149 @@ function formatObj(yahooObj, command) {
             ")"
           );
         });
+        filteredStandings.splice(6, 0, "---------------------------------");
+        postMessage(
+          `Week ${currentWeek} Standings: \n` + filteredStandings.join("\n")
+        );
+        break;
 
-      // Adds in divider for sacko bowl
-      sackoStandings.splice(2, 0, "---------------------------------");
-      postMessage(
-        `Week ${currentWeek} Sacko Bowl Hunt: \n` + sackoStandings.join("\n")
-      );
-      break;
+      case "@avgdiff":
+        let sortedAvgDiff = standings
+          .sort((a, b) => {
+            return (
+              (b.standings.points_for - b.standings.points_against)/(currentWeek-1) - (a.standings.points_for - a.standings.points_against)/(currentWeek-1)
+            );
+          })
+          .map((team) => {
+            return (
+              standings.indexOf(team) +
+              1 +
+              ". " +
+              team.name +
+              " " +
+              "(" +
+              ((team.standings.points_for - team.standings.points_against)/(currentWeek-1)).toFixed(
+                2
+              ) +
+              ")"
+            );
+          })
+          .join("\n");
+          console.log(typeof currentWeek);
+        postMessage(
+          `Week ${currentWeek} Avg Differential Standings: \n` +
+            sortedAvgDiff
+        );
+        break;
 
-    case "@pointsagainst":
-      let sortedPointsAgainst = standings
-        .sort((a, b) => {
-          return b.standings.points_against - a.standings.points_against;
-        })
-        .map((team) => {
-          return (
-            standings.indexOf(team) +
-            1 +
-            ". " +
-            team.name +
-            " " +
-            "(" +
-            team.standings.points_against.toFixed(2) +
-            ")"
-          );
-        })
-        .join("\n");
-      postMessage(
-        `Week ${currentWeek} Points Against Standings: \n` + sortedPointsAgainst
-      );
-      break;
+      case "@sackowatch":
+        //using the week it is and the week playoffs start and the current standings, You can filter the teams who are still theoretically possible to get sacko and as the season goes on the ranked list will get smaller and smaller. It will show how many games out you are
 
-    case "@pointsfor":
-      let sortedPointsFor = standings
-        .sort((a, b) => {
-          return (
-            parseFloat(b.standings.points_for) -
-            parseFloat(a.standings.points_for)
-          );
-        })
-        .map((team) => {
-          return (
-            standings.indexOf(team) +
-            1 +
-            ". " +
-            team.name +
-            " " +
-            "(" +
-            parseFloat(team.standings.points_for).toFixed(2) +
-            ")"
-          );
-        })
-        .join("\n");
-      postMessage(
-        `Week ${currentWeek} Points For Standings: \n` + sortedPointsFor
-      );
-      break;
+        // Reverse, slices to first 6 elements and formats text
+        let sackoStandings = standings
+          .reverse()
+          .slice(0, 6)
+          .map((team) => {
+            return (
+              standings.indexOf(team) +
+              1 +
+              ". " +
+              team.name +
+              " " +
+              "(" +
+              team.standings.outcome_totals.wins +
+              "-" +
+              team.standings.outcome_totals.losses +
+              ")"
+            );
+          });
 
-    case "@pointsdiff":
-      let sortedPointsDiff = standings
-        .sort((a, b) => {
-          return (
-            (b.standings.points_for - b.standings.points_against) -(a.standings.points_for - a.standings.points_against)
-          );
-        })
-        .map((team) => {
-          return (
-            standings.indexOf(team) +
-            1 +
-            ". " +
-            team.name +
-            " " +
-            "(" +
-            (team.standings.points_for - team.standings.points_against).toFixed(
-              2
-            ) +
-            ")"
-          );
-        })
-        .join("\n");
-      postMessage(
-        `Week ${currentWeek} Points Differential Standings: \n` +
-          sortedPointsDiff
-      );
-      break;
+        // Adds in divider for sacko bowl
+        sackoStandings.splice(2, 0, "---------------------------------");
+        postMessage(
+          `Week ${currentWeek} Sacko Bowl Hunt: \n` + sackoStandings.join("\n")
+        );
+        break;
 
-    // case "@pointsdiff":
-    //   postMessage('Still a work in progress...');
-    //   break;
+      case "@pointsagainst":
+        let sortedPointsAgainst = standings
+          .sort((a, b) => {
+            return b.standings.points_against - a.standings.points_against;
+          })
+          .map((team) => {
+            return (
+              standings.indexOf(team) +
+              1 +
+              ". " +
+              team.name +
+              " " +
+              "(" +
+              team.standings.points_against.toFixed(2) +
+              ")"
+            );
+          })
+          .join("\n");
+        postMessage(
+          `Week ${currentWeek} Points Against Standings: \n` + sortedPointsAgainst
+        );
+        break;
+
+      case "@pointsfor":
+        let sortedPointsFor = standings
+          .sort((a, b) => {
+            return (
+              parseFloat(b.standings.points_for) -
+              parseFloat(a.standings.points_for)
+            );
+          })
+          .map((team) => {
+            return (
+              standings.indexOf(team) +
+              1 +
+              ". " +
+              team.name +
+              " " +
+              "(" +
+              parseFloat(team.standings.points_for).toFixed(2) +
+              ")"
+            );
+          })
+          .join("\n");
+        postMessage(
+          `Week ${currentWeek} Points For Standings: \n` + sortedPointsFor
+        );
+        break;
+
+      case "@pointsdiff":
+        let sortedPointsDiff = standings
+          .sort((a, b) => {
+            return (
+              (b.standings.points_for - b.standings.points_against) -(a.standings.points_for - a.standings.points_against)
+            );
+          })
+          .map((team) => {
+            return (
+              standings.indexOf(team) +
+              1 +
+              ". " +
+              team.name +
+              " " +
+              "(" +
+              (team.standings.points_for - team.standings.points_against).toFixed(
+                2
+              ) +
+              ")"
+            );
+          })
+          .join("\n");
+        postMessage(
+          `Week ${currentWeek} Points Differential Standings: \n` +
+            sortedPointsDiff
+        );
+        break;
+    }
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -203,6 +205,7 @@ function formatObj(yahooObj, command) {
 function commandListener(text) {
   for (let command of botCommands) {
     if (text === command) {
+      console.log(`Command detected: ${text}`)
       return true;
     }
   }

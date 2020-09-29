@@ -7,7 +7,7 @@ const bot = require("./groupmebot.js");
 const yahoo = require("./yahoobot.js");
 
 // Imports s3ReadUpload.js **FOR DEPLOYMENT**
-const s3 = require("./s3ReadUpload.js");
+const s3 = require("./s3.js");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -23,32 +23,22 @@ app.post("/", async function incomingMessage(req, res) {
   try {
     const { text } = req.body;
     const isCommand = bot.commandListener(text);
-    const exists = await s3.fileExists()
 
     if(isCommand){
+
+      const exists = await s3.fileExists()
+
       if ( text == '@help' ) {
         console.log('Command was @help');
         bot.helpMessage();
       } else if ( exists ) {
-        console.log(`Command was "${text}"`);
-        console.log(`Tokens.josn exists? ${exists}`);
-        console.log("Reading file from AWS...");
         const tokens = await s3.readFile();
-        const parsedTokens = JSON.parse(tokens.toString());
-        console.log("Getting data from Yahoo API...");
-        const data = await yahoo.getData(parsedTokens);
-        console.log("Formatting Yahoo return object...");
+        const data = await yahoo.getData(tokens);
         const message = await bot.formatObj(data, text);
-      } else {
-        console.log(`Tokens.josn exists? ${exists}`);
-        console.log("Creating tokens.json on AWS...");
-        const refreshedTokens = await yahoo.createAwsTokensFile()
-        console.log(refreshedTokens);
-        console.log("Converting String to JSON...");
-        const parsedRefreshedTokens = await JSON.parse(refreshedTokens.toString());
-        console.log("Getting data from Yahoo API...");
-        const data = await yahoo.getData(parsedRefreshedTokens);
-        console.log("Formatting Yahoo return object...");
+      } else if ( !exists ) {
+        const createTokens = await yahoo.createAwsTokensFile()
+        const newTokens = await s3.readFile();
+        const data = await yahoo.getData(newTokens);
         const message = await bot.formatObj(data, text)
       }
     }
