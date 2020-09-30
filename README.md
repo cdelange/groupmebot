@@ -2,7 +2,7 @@
 
 ## About
 
-A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3. This project really solidified my grasp of asynchronous programming in Javascript, promises, and the async/await keywords. I used https://cron-job.org/en/ to keep my Heroku app from idling 15/24 hours for fast bot response as well as to add scheduled commands.
+A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3. This project really solidified my grasp of asynchronous programming in Javascript, promises, and the async/await keywords.
 
 ## Built With
 
