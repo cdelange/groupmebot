@@ -83,12 +83,11 @@ Download and get Ngrok up and running
 10. Also take note of your buckets name `AWSBUCKETNAME`
 
 
-### Part 2: Configure this app
+### Part 2: Configure app
 
-1. [Install NodeJS](https://nodejs.org/en/download/) (I used v11.11.0 but most versions should work)
-2. Clone this repo
-3. In the repo directory type `npm install`
-4. In a text editor, create a file named '.env' and add the following key/values:
+1. Clone this repo
+2. In the repo directory type `npm install`
+3. In a text editor, create a file named '.env' and add the following key/values:
     - `GROUPMETOKEN: example123`
     - `YAHOOCLIENTID: example123`
     - `YAHOOCLIENTSECRET: example123`
@@ -118,8 +117,8 @@ Download and get Ngrok up and running
 
 ## Scripts
 
--  start: "node index.js"
--  run server: "nodemon index.js"
+-  `start`: "node index.js"
+-  `run server`: "nodemon index.js"
 
 ## Current Commands
 
