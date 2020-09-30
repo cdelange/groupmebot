@@ -2,7 +2,7 @@
 
 ## About
 
-A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3. This project really solidified my grasp of asynchronous programming in Javascript, promises, and the async/await keywords.
+A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3. This project really solidified my grasp of asynchronous programming in Javascript, promises, and the async/await keywords. I used https://cron-job.org/en/ to keep my Heroku app from idling 15/24 hours for fast bot response as well as to add scheduled commands.
 
 ## Built With
 
@@ -47,6 +47,9 @@ Requests are authenticated using a Bot ID for GroupMe and OAuth2 authentication 
 
 ## Set Up
 
+### Ngrok
+Download and get Ngrok up and running
+
 ### Yahoo API access:
 1. Log in and create an Application here https://developer.yahoo.com/apps/create/
 2. Fill out the application form
@@ -55,12 +58,75 @@ Requests are authenticated using a Bot ID for GroupMe and OAuth2 authentication 
     - Callback Domain (I did not use this, but set it to 'localhost:3000')
     - API Permissions (Fantasy Sports Read)
 3. Create Application
-4. In a file named '.env'
+4. Take note of the App ID `YAHOOAPPID`, Client ID `YAHOOCLIENTID`,and Client Secret `YAHOOCLIENTSECRET`
+5. Replace your own Client ID in this URL https://api.login.yahoo.com/oauth2/request_auth?client_id=YOUR-CLIENT-ID-GOES-HERE&redirect_uri=oob&response_type=code&language=en-us amd navigate to this page.
+6. Agree to allow access and take note of the access code `YAHOOACCESSCODE`
+
+### GroupMe API access:
+1. Sign in and go to the the GroupMe Dev page at https://dev.groupme.com/
+2. Click the 'Bots' tab on the top of the page
+3. Click 'Create Bot'
+3. Name your bot and set your callback as either your ngrok address for local developement or your deployed sites address.
+
+### AWS S3 access:
+
+1. Log in to AWS and navigate to the console page at https://aws.amazon.com/console/
+2. In the top left corner, click Services and choose S3 from the list of services under Storage.
+3. Click 'Create bucket' and pick any name for your bucket that is valid.
+4. Set up bucket without changing the default settings.
+5. Go to the AWS Management Console
+6. Hover over your company name in the top right menu and click "My Security Credentials"
+7. Scroll to the "Access Keys" section
+8. Click on "Create New Access Key"
+9. Take note of both the Access Key ID `AWSID` and Secret Access Key `AWSSECRET`
+
+
+### Part 2: Configure this app
+
+1. [Install NodeJS](https://nodejs.org/en/download/) (I used v11.11.0 but most versions should work)
+2. Clone this repo
+3. In the repo directory type `npm install`
+4. In a text editor, create a file named '.env' and add the following key/values:
+    - `GROUPMETOKEN`: Obtained from Yahoo in step 5 above
+    - `YAHOOCLIENTID`: Also obtained from Yahoo in step 5 above
+    - `YAHOOCLIENTSECRET`: Obtained from Yahoo in step 9 above (**not the App ID in step 5!**)
+    - `YAHOOAPPCODE: Also obtained from Yahoo in step 5 above`
+    - `AWSID`:
+    - `AWSSECRET`:
+    - `AWSBUCKETNAME`: Also obtained from Yahoo in step 5 above
+    - `LEAGUEKEY`: the League Key has three parts:
+        - (1) a unique prefix Yahoo randomly assigns each season
+        - (2) the string ".l." (that's a lowercase L)
+        - (3) the unique ID of your league
+        - E.g.: `398.l.123456`
+        - To find out this number:
+            - If it's 2020, the unique prefix for NFL is '399'
+
+### Part 3: Run app
+
+1. Now you should have the .env file set, all dependencies installed, and your GroupMe callback URL set to your ngrok address.
+2. Navigate to the repo directory and run:
+    ```
+    > npm run server
+    ```
+3. Once the server is up and running, go to your GroupMe chat and send any command (E.g. '@help')
+4. The program should run the intial authorization and return the standings to the GroupMe chat.
+5. You now should have a 'tokens.json' file in your AWS S3 bucket! The application will refresh this file as needed.
+
 ## Scripts
 
 -  start: "node index.js"
 -  run server: "nodemon index.js"
 
+## Current Commands
+
+@help: Will show all commands and descriptions
+@standings: Current standings
+@sackowatch: Sacko implications
+@pointsagainst: Points Against standings
+@pointsfor: Points For standings
+@pointsdiff: Point differential standings
+@avgdiff: Average point differential
 
 ## Acknowledgements
 These were both helpful repositories that I emulated in some of my Yahoo API calls. There repositories have great README's to help understand Yahoo's confusing API and whatadewitt's Node wrapper module for the API makes it a breeze to use. All I that was left for me to do was implement the OAuth2 processes.
