@@ -67,6 +67,7 @@ Download and get Ngrok up and running
 2. Click the 'Bots' tab on the top of the page
 3. Click 'Create Bot'
 3. Name your bot and set your callback as either your ngrok address for local developement or your deployed sites address.
+4. Take note of your bots ID `GROUPMETOKEN`
 
 ### AWS S3 access:
 
@@ -79,6 +80,7 @@ Download and get Ngrok up and running
 7. Scroll to the "Access Keys" section
 8. Click on "Create New Access Key"
 9. Take note of both the Access Key ID `AWSID` and Secret Access Key `AWSSECRET`
+10. Also take note of your buckets name `AWSBUCKETNAME`
 
 
 ### Part 2: Configure this app
@@ -87,14 +89,15 @@ Download and get Ngrok up and running
 2. Clone this repo
 3. In the repo directory type `npm install`
 4. In a text editor, create a file named '.env' and add the following key/values:
-    - `GROUPMETOKEN`: Obtained from Yahoo in step 5 above
-    - `YAHOOCLIENTID`: Also obtained from Yahoo in step 5 above
-    - `YAHOOCLIENTSECRET`: Obtained from Yahoo in step 9 above (**not the App ID in step 5!**)
-    - `YAHOOAPPCODE: Also obtained from Yahoo in step 5 above`
-    - `AWSID`:
-    - `AWSSECRET`:
-    - `AWSBUCKETNAME`: Also obtained from Yahoo in step 5 above
-    - `LEAGUEKEY`: the League Key has three parts:
+    - `GROUPMETOKEN: example123`
+    - `YAHOOCLIENTID: example123`
+    - `YAHOOCLIENTSECRET: example123`
+    - `YAHOOAPPCODE: example123`
+    - `AWSID: example123`
+    - `AWSSECRET: example123`
+    - `AWSBUCKETNAME: example123`
+    - `LEAGUEKEY:  example123`
+          The League Key has three parts:
         - (1) a unique prefix Yahoo randomly assigns each season
         - (2) the string ".l." (that's a lowercase L)
         - (3) the unique ID of your league
