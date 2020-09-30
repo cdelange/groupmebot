@@ -12,6 +12,7 @@ A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fa
 ## Tools Used
 
 - [ngrok](https://ngrok.com/) - Allowed me to set my GroupMe bot's callback URI to an ngrok forwarding address that allowed me to develop and run my application locally, while being able to test it online.
+- [cron-jobs](https://cron-job.org/en/) - Allowed me to keep my Heroku app from idling 15/24 hours for fast bot response as well as to add scheduled commands.
 
 ## Code Overview
 
