@@ -1,15 +1,17 @@
 # Yahoo Fantasy Football Bot
 
-Version: 1.0.0
-
 ## About
 
-A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3.
+A NodeJS Fantasy Football Bot that consumes the Yahoo Fantasy API using yahoo-fantasy module and custom OAuth2 authentication. JSON reponses are formated and posted to GroupMe using GroupMe's API. JSON tokens stored in AWS S3. This project really solidified my grasp of asynchronous programming in Javascript, promises, and the async/await keywords.
 
 ## Built With
 
 * [Node](https://nodejs.org/)
 * [Heroku](https://www.heroku.com/)
+
+## Tools Used
+
+- [ngrok](https://ngrok.com/) - Allowed me to set my GroupMe bot's callback URI to an ngrok forwarding address that allowed me to develop and run my application locally, while being able to test it online.
 
 ## Code Overview
 
@@ -45,8 +47,15 @@ Requests are authenticated using a Bot ID for GroupMe and OAuth2 authentication 
 
 ## Set Up
 
-Coming soon...
-
+### Yahoo API access:
+1. Log in and create an Application here https://developer.yahoo.com/apps/create/
+2. Fill out the application form
+    - Application Name (Can be anything)
+    - Application Type (Web Application)
+    - Callback Domain (I did not use this, but set it to 'localhost:3000')
+    - API Permissions (Fantasy Sports Read)
+3. Create Application
+4. In a file named '.env'
 ## Scripts
 
 -  start: "node index.js"
@@ -59,7 +68,8 @@ These were both helpful repositories that I emulated in some of my Yahoo API cal
 -  [https://github.com/whatadewitt/yahoo-fantasy-sports-api](https://github.com/whatadewitt/yahoo-fantasy-sports-api)
 
 ## Bugs and Issues
-This is a work in progress. Report any issues via the GitHub issues page!
+
+This repo is functionality complete — PRs and issues welcome!
 
 ## Licence
 
